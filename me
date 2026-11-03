@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#5b216b">
+<title>نُطقي وتقدّمي | الأستاذة رحمة الحربي</title>
+<style>
+:root{--p:#6d2879;--d:#4b1857;--bg:#f7f2f9;--line:#e7dfea;--ink:#26334b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
+header{padding:25px 15px;text-align:center;color:white;background:linear-gradient(120deg,var(--d),#85418e)}
+header h1{margin:0 0 8px}main{max-width:950px;margin:20px auto;padding:0 13px}
+.card{background:white;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:15px}
+h2{font-size:19px;color:var(--d);margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+label{display:block;font-weight:bold;margin-bottom:7px}input,select{width:100%;padding:12px;border:1px solid #dcdce5;border-radius:11px;font:inherit;background:white}
+button{border:0;border-radius:11px;padding:12px 15px;font:inherit;font-weight:bold;cursor:pointer;min-height:44px}
+.primary{background:var(--p);color:white}.soft{background:#f4eaf7;color:var(--d)}.secondary{background:white;border:1px solid var(--line);color:var(--d)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.status{padding:12px;background:#f8f5fa;border-radius:11px;color:var(--d);margin:12px 0;min-height:44px}
+.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.word{border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.word strong{font-size:20px;direction:ltr;display:block}.word small{display:block;color:#667085;margin-top:5px}
+.word.done{background:#f1fbf4;border-color:#9bd4af}.bar{height:12px;background:#eee5f1;border-radius:20px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b4b98,#54205f)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{flex:1;min-width:100px;text-align:center;background:#faf7fb;padding:12px;border:1px solid var(--line);border-radius:12px}.stat b{display:block;font-size:23px;color:var(--d)}
+.note{font-size:13px;line-height:1.8;color:#667085}.reading{direction:ltr;text-align:left;line-height:2;font-size:19px;background:#fbf8fc;padding:14px;border-radius:12px;white-space:pre-wrap}
+@media(max-width:600px){.card{padding:14px}}
+</style>
+</head>
+<body>
+<header><h1>🌟 نُطقي وتقدّمي</h1><p>منصة تفاعلية لتعلّم نطق الكلمات الإنجليزية وتدريب القراءة</p><p><b>إعداد المعلمة: رحمة الحربي</b></p></header>
+<main>
+<section class="card">
+<h2>👩‍🎓 بيانات الطالبة</h2>
+<div class="grid">
+<div><label for="studentName">اسم الطالبة</label><input id="studentName" autocomplete="off" placeholder="اكتبي اسمك"></div>
+<div><label for="studentClass">الصف</label><input id="studentClass" autocomplete="off" placeholder="مثال: الخامس / أ"></div>
+</div>
+<p class="note">الاسم والصف للاستخدام داخل الصفحة فقط، ولا يتم حفظهما في قاعدة البيانات.</p>
+</section>
+<section class="card">
+<h2>🔤 تدريب الكلمات</h2>
+<div class="grid">
+<div><label for="unitSelect">اختاري الوحدة</label><select id="unitSelect"><option value="starter">الكلمات الأساسية</option></select></div>
+<div><label for="voice">الصوت الإنجليزي</label><select id="voice"><option>جارٍ تحميل الأصوات…</option></select></div>
+<div><label for="rate">سرعة النطق: <span id="rateVal">0.9</span></label><input id="rate" type="range" min=".5" max="1.5" step=".1" value=".9"></div>
+<div><label for="pitch">طبقة الصوت: <span id="pitchVal">1</span></label><input id="pitch" type="range" min="0" max="2" step=".1" value="1"></div>
+</div>
+<div class="actions">
+<button class="primary" id="playAll">▶ تشغيل كل الكلمات</button>
+<button class="secondary" id="stop">⏹ إيقاف</button>
+<button class="secondary" id="retry">🔁 إعادة غير المتقن</button>
+</div>
+<div class="status" id="status" aria-live="polite">اضغطي على السماعة للاستماع، ثم الميكروفون لتجربة النطق.</div>
+<div class="words" id="wordList"></div>
+</section>
+<section class="card">
+<h2>🏆 تقدّمك في هذه الجلسة</h2>
+<div class="stats"><div class="stat"><b id="mastered">0</b>كلمات متقنة</div><div class="stat"><b id="attempted">0</b>محاولات</div><div class="stat"><b id="percent">0%</b>نسبة الإتقان</div></div>
+<div class="bar" style="margin-top:12px"><span id="progress"></span></div>
+<p class="note">التقييم تقريبي ويعتمد على دعم المتصفح للتعرّف على الكلام. لا يتم تسجيل الصوت أو حفظه.</p>
+</section>
+<section class="card">
+<h2>📖 تدريب القراءة</h2>
+<label for="readingSelect">نص القراءة المنشور</label><select id="readingSelect"><option value="">لا توجد نصوص محمّلة</option></select>
+<div class="reading" id="readingText">ستظهر هنا نصوص القراءة المنشورة من لوحة المعلمة.</div>
+<div class="actions"><button class="primary" id="readText">🔊 استمعي إلى النص</button><button class="secondary" id="readPractice">🎤 اقرئي النص</button><button class="secondary" id="stopReading">⏹ إيقاف</button></div>
+<div class="status" id="readingStatus">استمعي للنص ثم اقرئيه بصوت واضح.</div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://bimmwjskagxkxdjvqsjv.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_nceQwHWGNsyjLIBEo-Drgw_DXXL1aAY";
+const db=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
+const starter=["Eat","Come","Go","Play","Raise your hand"];
+let words=[...starter],units=[],readings=[],attempted=new Set(),mastered=new Set(),recognition=null,readingRecognition=null;
+function status(t){$("status").textContent=t}
+function progress(){let n=mastered.size,p=words.length?Math.round(n/words.length*100):0;$("mastered").textContent=n;$("attempted").textContent=attempted.size;$("percent").textContent=p+"%";$("progress").style.width=p+"%"}
+function render(){const root=$("wordList");root.innerHTML="";words.forEach((w,i)=>{const el=document.createElement("div");el.className="word"+(mastered.has(i)?" done":"");const info=document.createElement("div"),b=document.createElement("strong"),sm=document.createElement("small");b.textContent=w;sm.textContent=mastered.has(i)?"✓ متقنة":attempted.has(i)?"حاولي مرة أخرى":"استمعي ثم انطقي";info.append(b,sm);const actions=document.createElement("div"),sp=document.createElement("button"),mic=document.createElement("button");sp.className=mic.className="soft";sp.textContent="🔊";mic.textContent="🎤";sp.setAttribute("aria-label","استمعي إلى "+w);mic.setAttribute("aria-label","جرّبي نطق "+w);sp.onclick=()=>speak(w);mic.onclick=()=>pronounce(i);actions.append(sp,mic);el.append(info,actions);root.append(el)});progress()}
+function setWords(list){words=Array.isArray(list)?list.filter(x=>typeof x==="string"&&x.trim()):[];attempted.clear();mastered.clear();render()}
+function voices(){if(!("speechSynthesis"in window))return;const all=speechSynthesis.getVoices(),en=all.filter(v=>/^en[-_]/i.test(v.lang));$("voice").innerHTML="";(en.length?en:all).forEach(v=>{let o=document.createElement("option");o.value=v.name;o.textContent=v.name+" — "+v.lang;$("voice").append(o)})}
+if("speechSynthesis"in window){voices();speechSynthesis.onvoiceschanged=voices}
+function speak(text,queue=false){return new Promise(resolve=>{if(!("speechSynthesis"in window)||!("SpeechSynthesisUtterance"in window)){status("هذا المتصفح لا يدعم النطق الصوتي. افتحي الصفحة في Safari أو Chrome محدّث.");resolve();return}if(!queue)speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text),v=speechSynthesis.getVoices().find(x=>x.name===$("voice").value);u.lang=v?.lang||"en-US";if(v)u.voice=v;u.rate=+$("rate").value;u.pitch=+$("pitch").value;u.onend=resolve;u.onerror=resolve;speechSynthesis.speak(u)})}
+$("rate").oninput=()=>$("rateVal").textContent=$("rate").value;$("pitch").oninput=()=>$("pitchVal").textContent=$("pitch").value;
+$("playAll").onclick=async()=>{if(!words.length){status("لا توجد كلمات في هذه القائمة.");return}speechSynthesis.cancel();status("جارٍ تشغيل الكلمات بالترتيب…");for(const w of words)await speak(w,true);status("انتهى تشغيل جميع الكلمات. أحسنتِ! 🌟")};
+$("stop").onclick=()=>{if("speechSynthesis"in window)speechSynthesis.cancel();recognition?.abort();readingRecognition?.abort();status("تم إيقاف التدريب الصوتي.")};
+function pronounce(i){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){status("التقييم الصوتي غير مدعوم في هذا المتصفح. جرّبي Chrome أو Edge.");return}recognition?.abort();recognition=new SR();recognition.lang="en-US";recognition.interimResults=false;recognition.maxAlternatives=3;attempted.add(i);status("انطقي الكلمة الآن…");recognition.onresult=e=>{const said=e.results[0][0].transcript.toLowerCase().replace(/[^a-z']/g,""),target=words[i].toLowerCase().replace(/[^a-z']/g,"");if(said===target||said.includes(target))mastered.add(i);else mastered.delete(i);status(mastered.has(i)?"ممتاز! نطقك واضح. 🌟":"محاولة جميلة! استمعي مرة أخرى وجرّبي.");render()};recognition.onerror=e=>status("تعذّر استخدام الميكروفون: "+e.error);recognition.start();render()}
+$("retry").onclick=()=>{const missed=words.filter((w,i)=>!mastered.has(i));if(!missed.length){status("أحسنتِ! لا توجد كلمات تحتاج إلى إعادة. 🎉");return}status("الكلمات التي تحتاج إلى إعادة: "+missed.join("، "));}
+$("unitSelect").onchange=()=>{const u=units.find(x=>String(x.id)===$("unitSelect").value);if(u)setWords(u.words||[])};
+$("readingSelect").onchange=()=>{const r=readings.find(x=>String(x.id)===$("readingSelect").value);$("readingText").textContent=r?.body||"لا يوجد نص قراءة محدد."};
+$("readText").onclick=()=>speak($("readingText").textContent);
+$("stopReading").onclick=()=>{speechSynthesis.cancel();readingRecognition?.abort();$("readingStatus").textContent="تم إيقاف القراءة."};
+$("readPractice").onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){$("readingStatus").textContent="التعرّف على الكلام غير مدعوم في هذا المتصفح.";return}readingRecognition?.abort();readingRecognition=new SR();readingRecognition.lang="en-US";readingRecognition.interimResults=false;$("readingStatus").textContent="ابدئي القراءة بصوت واضح…";readingRecognition.onresult=e=>{$("readingStatus").textContent="وصلنا صوتك: "+e.results[0][0].transcript};readingRecognition.onerror=e=>$("readingStatus").textContent="تعذّر تشغيل الميكروفون: "+e.error;readingRecognition.start()};
+async function loadContent(){setWords(starter);if(!db){status("بدأ التدريب بالكلمات الأساسية. تعذّر الاتصال بقاعدة المحتوى.");return}try{const [u,r]=await Promise.all([db.from("units").select("id,title,words").eq("published",true).order("created_at"),db.from("readings").select("id,title,body").eq("published",true).order("created_at")]);if(!u.error&&u.data?.length){units=u.data;$("unitSelect").innerHTML="";units.forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.title;$("unitSelect").append(o)});setWords(units[0].words||[]);status("تم تحميل وحدات المعلمة بنجاح.")}else status("لا توجد وحدات منشورة حاليًا؛ يمكنك التدريب على الكلمات الأساسية.");if(!r.error&&r.data?.length){readings=r.data;$("readingSelect").innerHTML="";readings.forEach(x=>{const o=document.createElement("option");o.value=x.id;o.textContent=x.title;$("readingSelect").append(o)});$("readingText").textContent=readings[0].body||""}}catch(e){status("تعذّر الاتصال؛ بدأنا التدريب بالكلمات الأساسية.")}}
+loadContent();
+window.addEventListener("beforeunload",()=>{recognition?.abort();readingRecognition?.abort();speechSynthesis?.cancel()});
+</script>
+</body></html>
