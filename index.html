@@ -116,7 +116,7 @@ $('playAll').onclick=async()=>{if(!items.length)build();for(const it of items){i
 $('stop').onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();if(recognition)recognition.abort();setStatus('تم إيقاف النطق.')};
 $('retryWrong').onclick=()=>{const wrong=items.filter(x=>!x.done);if(!wrong.length){setStatus('لا توجد كلمات غير متقنة حاليًا.');return}$('wordInput').value=wrong.map(x=>x.word).join('\n');build();setStatus('تم تجهيز الكلمات التي تحتاج إلى تدريب مرة أخرى.')};
 $('reset').onclick=()=>{items.forEach(x=>{x.done=false;x.tries=0});attempts=0;activeIndex=-1;render();update();$('recognition').textContent='تم تصفير نتائج التدريب.'};
-lowadweeklywords();
+loadWeeklyWords();
 </script>
 </body>
 </html>
