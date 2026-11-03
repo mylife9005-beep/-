@@ -95,6 +95,9 @@ teacher</textarea>
 const $=id=>document.getElementById(id);
 let items=[],attempts=0,recognition=null,activeIndex=-1;
 const sample=['book','apple','school','teacher'];
+  const SUPABASE_URL = 'https://bimmwjskagxkxdjvqsjv.supabase.co'; const SUPABASE_KEY = 'sb_publishable_nceQwHWGNsyjLIBEo-Drgw_DXXL1aAY';
+async function loadWeeklyWords() { setStatus('جارٍ تحميل كلمات الأسبوع...'); try { const url = ${SUPABASE_URL}/rest/v1/weekly_words?select=week_name,words,start_date&is_published=eq.true&order=start_date.desc&limit=1; const response = await fetch(url, { headers: { apikey: SUPABASE_KEY } }); if (!response.ok) throw new Error('تعذر التحميل'); const rows = await response.json(); if (!rows.length || !rows[0].words) { setStatus('لا توجد كلمات منشورة حاليًا'); build(); return; } $('wordInput').value = rows[0].words .split(/[\s,،;؛]+/) .filter(Boolean) .join('\n'); build(); setStatus('تم تحميل كلمات: ' + rows[0].week_name); } catch (error) { build(); setStatus('تعذر تحميل الكلمات، تحققي من الاتصال'); } 
+
 function getVoices(){const voices=speechSynthesis.getVoices();const sel=$('voice');const old=sel.value;sel.innerHTML='';let english=voices.filter(v=>/^en(-|_)/i.test(v.lang));if(!english.length)english=voices;english.forEach(v=>{let o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} — ${v.lang}`;sel.appendChild(o)});if(old&&[...sel.options].some(o=>o.value===old))sel.value=old;}
 if('speechSynthesis'in window){getVoices();speechSynthesis.onvoiceschanged=getVoices}else{$('status').textContent='متصفحك لا يدعم خاصية النطق الصوتي.'}
 $('rate').oninput=()=> $('rateVal').textContent=$('rate').value;
@@ -113,7 +116,7 @@ $('playAll').onclick=async()=>{if(!items.length)build();for(const it of items){i
 $('stop').onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel();if(recognition)recognition.abort();setStatus('تم إيقاف النطق.')};
 $('retryWrong').onclick=()=>{const wrong=items.filter(x=>!x.done);if(!wrong.length){setStatus('لا توجد كلمات غير متقنة حاليًا.');return}$('wordInput').value=wrong.map(x=>x.word).join('\n');build();setStatus('تم تجهيز الكلمات التي تحتاج إلى تدريب مرة أخرى.')};
 $('reset').onclick=()=>{items.forEach(x=>{x.done=false;x.tries=0});attempts=0;activeIndex=-1;render();update();$('recognition').textContent='تم تصفير نتائج التدريب.'};
-build();
+lowadweeklywords();
 </script>
 </body>
 </html>
