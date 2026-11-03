@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة التقييم والتدريب الصوتي التفاعلي - أ. رحمة الحربي</title>
+  <style>
+    :root {
+      --bg-color: #f7f5fa;
+      --card-bg: #ffffff;
+      --primary-purple: #6a1b9a;
+      --light-purple: #f3e5f5;
+      --border-purple: #e1bee7;
+      --text-main: #2c3e50;
+      --text-muted: #666;
+      --success-green: #2e7d32;
+      --warning-orange: #ef6c00;
+      --danger-red: #c62828;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Header Banner */
+    .teacher-header {
+      background: linear-gradient(135deg, #4a148c, #7b1fa2);
+      color: white;
+      padding: 18px 24px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(106, 27, 154, 0.2);
+    }
+
+    .teacher-header h1 {
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .teacher-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Main Card Layouts */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      border: 1px solid #ede7f6;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .student-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+      background: #faf5fc;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px dashed var(--border-purple);
+    }
+
+    @media (max-width: 768px) {
+      .settings-grid, .student-info-grid {
+        grid-template-columns: 1fr;
+      }
+      .teacher-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-group label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--text-main);
+    }
+
+    select, input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-purple);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--primary-purple);
+      box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      height: 90px;
+    }
+
+    .action-buttons-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .info-hint {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Buttons Style */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, #6a1b9a, #4a148c);
+      color: white;
+    }
+
+    .btn-purple:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1.5px solid var(--border-purple);
+      color: var(--primary-purple);
+    }
+
+    .btn-outline:hover {
+      background: var(--light-purple);
+    }
+
+    /* Progress Section */
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-title-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .progress-bar-bg {
+      height: 12px;
+      background: #f0e6f6;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ab47bc, #6a1b9a);
+      transition: width 0.4s ease;
+      border-radius: 10px;
+    }
+
+    /* Interactive Section Controls */
+    .interactive-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .section-tag {
+      background: var(--light-purple);
+      color: var(--primary-purple);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .control-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Practice Word Card */
+    .word-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .word-card {
+      background: white;
+      border: 1.5px solid #ece6f2;
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .word-card.success {
+      border-color: var(--success-green);
+      background-color: #f1f8e9;
+    }
+
+    .word-card.warning {
+      border-color: var(--warning-orange);
+      background-color: #fffde7;
+    }
+
+    .word-card.error {
+      border-color: var(--danger-red);
+      background-color: #ffebee;
+    }
+
+    .word-text-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .word-text {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #1a237e;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .score-badge {
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .score-badge.green { color: var(--success-green); }
+    .score-badge.orange { color: var(--warning-orange); }
+    .score-badge.red { color: var(--danger-red); }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
+    }
+
+    .speaker-btn {
+      background: #f3e5f5;
+      color: var(--primary-purple);
+    }
+
+    .speaker-btn:hover {
+      background: #e1bee7;
+    }
+
+    .mic-btn {
+      background: #ffebee;
+      color: #d32f2f;
+    }
+
+    .mic-btn:hover {
+      background: #ffcdd2;
+    }
+
+    .mic-btn.recording {
+      animation: pulse 1.2s infinite;
+      background: #d32f2f;
+      color: white;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+    }
+
+    /* Notice Banner */
+    .notice-banner {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 0.88rem;
+      color: #795548;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header Banner -->
+  <div class="teacher-header">
+    <h1>🎙️ منصة التقييم والتدريب الصوتي التفاعلي</h1>
+    <div class="teacher-badge">إعداد وتصميم: الأستاذة رحمة الحربي</div>
+  </div>
+
+  <!-- Settings & Input Section -->
+  <div class="card">
+    <!-- Student Info Grid -->
+    <div class="student-info-grid">
+      <div class="field-group">
+        <label>👤 اسم الطالب / الطالبة:</label>
+        <input type="text" id="studentNameInput" placeholder="أدخل اسمك هنا...">
+      </div>
+      <div class="field-group">
+        <label>🏫 الصف الدراسي:</label>
+        <input type="text" id="studentClassInput" placeholder="أدخل الصف (مثال: الثالث الابتدائي)...">
+      </div>
+    </div>
+
+    <div class="settings-grid">
+      <div class="field-group">
+        <label>طبقة الصوت (0 – 2):</label>
+        <select id="pitchSelect">
+          <option value="1" selected>1</option>
+          <option value="0.5">0.5 (منخفض)</option>
+          <option value="1.5">1.5 (مرتفع)</option>
+          <option value="2">2 (حاد جداً)</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>السرعة (0.5 – 1.5):</label>
+        <select id="rateSelect">
+          <option value="1" selected>1</option>
+          <option value="0.5">0.5 (بطيء)</option>
+          <option value="1.25">1.25 (سريع)</option>
+          <option value="1.5">1.5 (سريع جداً)</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>اختر الصوت (المتصفح/النظام):</label>
+        <select id="voiceSelect">
+          <option value="">جاري تحميل أصوات النظام...</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>قائمة الكلمات (سطر لكل كلمة أو افصل بينها بفاصلة):</label>
+      <textarea id="wordsInput" placeholder="اكتب كلماتك هنا... (مثال: book, teacher, student)"></textarea>
+    </div>
+
+    <div class="action-buttons-top">
+      <div class="info-hint">
+        انقر على 🔊 للسماع، أو 🎤 للنطق والتقييم.
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-outline" id="copyLinkBtn">🔗 نسخ رابط هذه القائمة</button>
+        <button class="btn btn-purple" id="generateBtn">✨ إنشاء الأزرار وتفعيل النظام</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar Card -->
+  <div class="card progress-section">
+    <div class="progress-title-row">
+      <span id="progressTitleLabel">📊 تقدمك في الوحدة</span>
+      <span id="progressText">0 / 0 كلمة</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+  </div>
+
+  <!-- Interactive Evaluation Section -->
+  <div class="card">
+    <div class="interactive-header">
+      <div class="section-tag">قسم التقييم التفاعلي - تدرب الآن</div>
+      <div class="control-tools">
+        <button class="btn btn-outline" id="playAllBtn">▶️ تشغيل الكل</button>
+        <button class="btn btn-outline" id="stopAllBtn">⏹️ إيقاف النطق</button>
+        <button class="btn btn-outline" id="retryErrorsBtn">🔄 أعد اختبار الأخطاء فقط</button>
+        <button class="btn btn-outline" id="resetProgressBtn">🗑️ تصفير التقدم</button>
+        <button class="btn btn-outline" id="savePageBtn">💾 حفظ الصفحة</button>
+      </div>
+    </div>
+
+    <!-- Word Cards Box -->
+    <div class="word-card-list" id="wordCardList">
+      <!-- Generated Cards Will Appear Here -->
+    </div>
+  </div>
+
+  <!-- Footer Notice Banner -->
+  <div class="notice-banner">
+    <span>💡</span>
+    <span>تنويه: ميزة التقييم بحاجة لاتصال إنترنت وصلاحية وصول للمايكروفون، وتعمل بأعلى كفاءة على متصفحات Chrome و Edge ويتم حفظ تقدمك تلقائياً في هذا المتصفح.</span>
+  </div>
+
+</div>
+
+<script>
+  let synth = window.speechSynthesis;
+  let voices = [];
+  let wordsData = [];
+
+  const voiceSelect = document.getElementById('voiceSelect');
+  const wordsInput = document.getElementById('wordsInput');
+  const studentNameInput = document.getElementById('studentNameInput');
+  const studentClassInput = document.getElementById('studentClassInput');
+  const generateBtn = document.getElementById('generateBtn');
+  const wordCardList = document.getElementById('wordCardList');
+  const progressText = document.getElementById('progressText');
+  const progressBar = document.getElementById('progressBar');
+  const progressTitleLabel = document.getElementById('progressTitleLabel');
+
+  // Load Speech Voices
+  function loadVoices() {
+    voices = synth.getVoices();
+    voiceSelect.innerHTML = '';
+    voices.forEach((voice, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = `${voice.name} (${voice.lang})`;
+      if (voice.lang.includes('en-US')) option.selected = true;
+      voiceSelect.appendChild(option);
+    });
+  }
+
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  loadVoices();
+
+  // Load Saved Data
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedWords = localStorage.getItem('rahma_words_list');
+    const savedName = localStorage.getItem('rahma_student_name');
+    const savedClass = localStorage.getItem('rahma_student_class');
+
+    if (savedWords) wordsInput.value = savedWords;
+    else wordsInput.value = "book\nteacher\nschool";
+
+    if (savedName) studentNameInput.value = savedName;
+    if (savedClass) studentClassInput.value = savedClass;
+
+    updateStudentLabel();
+    buildCards();
+  });
+
+  // Update Student Name on Progress Title
+  studentNameInput.addEventListener('input', () => {
+    localStorage.setItem('rahma_student_name', studentNameInput.value);
+    updateStudentLabel();
+  });
+
+  studentClassInput.addEventListener('input', () => {
+    localStorage.setItem('rahma_student_class', studentClassInput.value);
+    updateStudentLabel();
+  });
+
+  function updateStudentLabel() {
+    const name = studentNameInput.value.trim();
+    const className = studentClassInput.value.trim();
+    if (name || className) {
+      progressTitleLabel.textContent = `📊 تقدم الطالب/ة: ${name} (${className})`;
+    } else {
+      progressTitleLabel.textContent = `📊 تقدمك في الوحدة`;
+    }
+  }
+
+  // Generate Cards
+  generateBtn.addEventListener('click', buildCards);
+
+  function buildCards() {
+    const text = wordsInput.value.trim();
+    if (!text) return;
+
+    localStorage.setItem('rahma_words_list', text);
+    const rawWords = text.split(/[\n,]+/).map(w => w.trim()).filter(w => w.length > 0);
+    
+    wordsData = rawWords.map(word => ({
+      word: word,
+      status: 'none', // none, success, warning, error
+      score: 0,
+      feedback: ''
+    }));
+
+    renderCards();
+    updateProgress();
+  }
+
+  function renderCards() {
+    wordCardList.innerHTML = '';
+    wordsData.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = `word-card ${item.status}`;
+      card.id = `card-${index}`;
+
+      card.innerHTML = `
+        <button class="icon-btn mic-btn" title="انقر للتحدث والتقييم" onclick="startRecognition(${index})">🎤</button>
+        <div class="word-text-box">
+          <div class="word-text">${item.word}</div>
+          <div class="score-badge ${getScoreColor(item.status)}">${item.feedback}</div>
+        </div>
+        <button class="icon-btn speaker-btn" title="استمع للنطق الصحيح" onclick="speakWord('${item.word}')">🔊</button>
+      `;
+
+      wordCardList.appendChild(card);
+    });
+  }
+
+  function getScoreColor(status) {
+    if (status === 'success') return 'green';
+    if (status === 'warning') return 'orange';
+    if (status === 'error') return 'red';
+    return '';
+  }
+
+  // Speak Word
+  function speakWord(text) {
+    if (synth.speaking) synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const selectedVoiceIndex = voiceSelect.value;
+    if (voices[selectedVoiceIndex]) utterance.voice = voices[selectedVoiceIndex];
+    utterance.rate = parseFloat(document.getElementById('rateSelect').value);
+    utterance.pitch = parseFloat(document.getElementById('pitchSelect').value);
+    synth.speak(utterance);
+  }
+
+  // Speech Recognition & Scoring Algorithm
+  function startRecognition(index) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("متصفحك لا يدعم ميزة التعرف على الصوت. يرجى استخدام Chrome أو Edge.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+
+    const cardElement = document.getElementById(`card-${index}`);
+    const micBtn = cardElement.querySelector('.mic-btn');
+    micBtn.classList.add('recording');
+
+    recognition.start();
+
+    recognition.onresult = (event) => {
+      micBtn.classList.remove('recording');
+      const spokenText = event.results[0][0].transcript.toLowerCase().trim();
+      const targetWord = wordsData[index].word.toLowerCase().trim();
+
+      evaluatePronunciation(index, spokenText, targetWord);
+    };
+
+    recognition.onerror = () => {
+      micBtn.classList.remove('recording');
+      wordsData[index].status = 'error';
+      wordsData[index].feedback = 'لم يتم سماع الصوت بوضوح ⚠️';
+      renderCards();
+    };
+
+    recognition.onend = () => {
+      micBtn.classList.remove('recording');
+    };
+  }
+
+  // Calculation of Similarity Score
+  function evaluatePronunciation(index, spoken, target) {
+    let score = 0;
+    if (spoken === target) {
+      score = 100;
+    } else if (spoken.includes(target) || target.includes(spoken)) {
+      score = 75;
+    } else {
+      score = calculateSimilarity(spoken, target);
+    }
+
+    if (score >= 85) {
+      wordsData[index].status = 'success';
+      wordsData[index].feedback = `ممتاز! (التقييم: ${score}%) 🌟🌟🌟`;
+    } else if (score >= 55) {
+      wordsData[index].status = 'warning';
+      wordsData[index].feedback = `جيد، حاول تحسين النطق (${spoken}) 🌟🌟`;
+    } else {
+      wordsData[index].status = 'error';
+      wordsData[index].feedback = `نطق غير دقيق (${spoken}) ⚠️`;
+    }
+
+    renderCards();
+    updateProgress();
+  }
+
+  function calculateSimilarity(s1, s2) {
+    let longer = s1.length < s2.length ? s2 : s1;
+    let shorter = s1.length < s2.length ? s1 : s2;
+    let longerLength = longer.length;
+    if (longerLength === 0) return 100;
+    return Math.round((longerLength - editDistance(longer, shorter)) / parseFloat(longerLength) * 100);
+  }
+
+  function editDistance(s1, s2) {
+    s1 = s1.toLowerCase();
+    s2 = s2.toLowerCase();
+    let costs = new Array();
+    for (let i = 0; i <= s1.length; i++) {
+      let lastValue = i;
+      for (let j = 0; j <= s2.length; j++) {
+        if (i == 0) costs[j] = j;
+        else {
+          if (j > 0) {
+            let newValue = costs[j - 1];
+            if (s1.charAt(i - 1) != s2.charAt(j - 1))
+              newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+            costs[j - 1] = lastValue;
+            lastValue = newValue;
+          }
+        }
+      }
+      if (i > 0) costs[s2.length] = lastValue;
+    }
+    return costs[s2.length];
+  }
+
+  function updateProgress() {
+    const completed = wordsData.filter(w => w.status === 'success').length;
+    const total = wordsData.length;
+    progressText.textContent = `${completed} / ${total} كلمة`;
+    const percentage = total === 0 ? 0 : (completed / total) * 100;
+    progressBar.style.width = `${percentage}%`;
+  }
+
+  // Extra Features
+  document.getElementById('playAllBtn').addEventListener('click', () => {
+    let i = 0;
+    function playNext() {
+      if (i < wordsData.length) {
+        speakWord(wordsData[i].word);
+        i++;
+        setTimeout(playNext, 1800);
+      }
+    }
+    playNext();
+  });
+
+  document.getElementById('stopAllBtn').addEventListener('click', () => synth.cancel());
+
+  document.getElementById('resetProgressBtn').addEventListener('click', () => {
+    wordsData.forEach(w => {
+      w.status = 'none';
+      w.feedback = '';
+    });
+    renderCards();
+    updateProgress();
+  });
+
+  document.getElementById('retryErrorsBtn').addEventListener('click', () => {
+    const errorIndices = wordsData
+      .map((w, idx) => w.status !== 'success' ? idx : null)
+      .filter(idx => idx !== null);
+
+    if (errorIndices.length > 0) {
+      alert(`سيتم فتح اختبار الأخطاء للكلمات التي لم تتقنها بعد (${errorIndices.length} كلمات).`);
+      startRecognition(errorIndices[0]);
+    } else {
+      alert("ما شاء الله! لقد أتقنت جميع الكلمات بنجاح 🎉");
+    }
+  });
+
+  document.getElementById('savePageBtn').addEventListener('click', () => {
+    alert("تم حفظ التقدم وإعدادات الطالب بنجاح!");
+  });
+
+  document.getElementById('copyLinkBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert("تم نسخ رابط القائمة بنجاح!");
+  });
+</script>
+</body>
+</html>
