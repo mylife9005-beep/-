@@ -1,110 +1,150 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#5b216b">
+<title>نُطقي وتقدّمي | الأستاذة رحمة الحربي</title>
+<style>
+:root{--purple:#6d2879;--deep:#4b1857;--pale:#f4eaf7;--line:#e7dfea;--ink:#26334b;--muted:#667085;--green:#16834b;--red:#c43d4b}
+*{box-sizing:border-box}body{margin:0;background:#f7f2f9;color:var(--ink);font-family:Tahoma,Arial,sans-serif}
+header{padding:22px 16px;text-align:center;background:linear-gradient(120deg,#4b1857,#85418e);color:white}
+header h1{margin:0 0 8px;font-size:clamp(21px,4vw,29px)}header p{margin:0;opacity:.94}
+main{max-width:1100px;margin:20px auto;padding:0 14px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 5px 20px #4b18570b}
+h2{font-size:19px;color:var(--deep);margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;font-weight:bold;margin-bottom:7px}input,select,textarea{width:100%;border:1px solid #dcdce5;border-radius:11px;padding:12px;font:inherit;background:white;color:var(--ink)}textarea{min-height:105px;resize:vertical}
+button{border:0;border-radius:11px;padding:12px 15px;font:inherit;font-weight:bold;cursor:pointer;min-height:44px}.primary{background:var(--purple);color:white}.secondary{background:white;border:1px solid var(--line);color:var(--deep)}.soft{background:var(--pale);color:var(--deep)}button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.muted,.note{font-size:13px;color:var(--muted);line-height:1.8}.status{margin-top:12px;padding:11px;border-radius:11px;background:#f8f5fa;color:var(--deep);min-height:42px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button.active{background:var(--deep);color:white}.wordlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.word{border:1px solid var(--line);border-radius:13px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}.word.done{background:#f1fbf4;border-color:#9bd4af}.word strong{font-size:20px;direction:ltr;unicode-bidi:embed}.word small{display:block;color:var(--muted);margin-top:5px}
+.progress{height:12px;background:#eee5f1;border-radius:20px;overflow:hidden;margin-top:10px}.bar{height:100%;width:0;background:linear-gradient(90deg,#8b4b98,#54205f)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{text-align:center;padding:13px;background:#faf7fb;border:1px solid var(--line);border-radius:13px}.stat b{display:block;font-size:24px;color:var(--deep)}
+.hidden{display:none!important}.reading-text{font-size:19px;line-height:2;direction:ltr;text-align:left;white-space:pre-wrap;background:#fbf8fc;padding:15px;border-radius:12px}
+.unit{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0}.unit h3{margin:0 0 7px;color:var(--deep)}
+footer{text-align:center;color:#765b7c;padding:5px 12px 24px}
+@media(max-width:650px){.grid,.stats{grid-template-columns:1fr 1fr}.grid .wide{grid-column:1/-1}.card{padding:15px}.word strong{font-size:18px}}
+</style>
+</head>
+<body>
+<header><h1>🌟 نُطقي وتقدّمي</h1><p>منصة تفاعلية لتعلّم نطق الكلمات الإنجليزية وتدريب القراءة</p><p style="margin-top:9px;font-weight:bold">إعداد المعلمة: رحمة الحربي</p></header>
+<main>
+<section class="card" id="studentPanel">
+<h2>👩‍🎓 بيانات الطالب/ـة</h2>
+<div class="grid"><div><label for="studentName">اسم الطالب/ـة</label><input id="studentName" autocomplete="off" placeholder="اكتبي اسمك"></div><div><label for="studentClass">الصف الدراسي</label><input id="studentClass" autocomplete="off" placeholder="مثال: الخامس / أ"></div></div>
+<p class="note">هذه البيانات مؤقتة داخل الصفحة ولا تُرسل إلى قاعدة البيانات ولا تُحفظ بعد إغلاق الصفحة.</p>
+</section>
 
-alter table public.weekly_words
-add column if not exists content_type text not null default 'words';
+<section class="card">
+<div class="tabs">
+<button class="soft active" data-tab="wordsTab">🔤 تدريب الكلمات</button>
+<button class="soft" data-tab="readingTab">📖 تدريب القراءة</button>
+<button class="soft" data-tab="teacherTab">🔐 لوحة المعلمة</button>
+</div>
+<div id="wordsTab">
+<h2>إعدادات النطق وقائمة الكلمات</h2>
+<div class="grid">
+<div><label for="unitSelect">الوحدة المنشورة</label><select id="unitSelect"><option value="">تحميل الوحدات…</option></select></div>
+<div><label for="voice">الصوت الإنجليزي</label><select id="voice"><option value="">الأصوات المتاحة في الجهاز</option></select></div>
+<div><label for="rate">سرعة النطق: <span id="rateVal">0.9</span></label><input id="rate" type="range" min=".5" max="1.5" step=".1" value=".9"></div>
+<div><label for="pitch">طبقة الصوت: <span id="pitchVal">1</span></label><input id="pitch" type="range" min="0" max="2" step=".1" value="1"></div>
+</div>
+<div class="actions"><button class="primary" id="playAll">▶ تشغيل كل الكلمات</button><button class="secondary" id="stopSpeech">⏹ إيقاف</button><button class="secondary" id="retryWrong">🔁 إعادة غير المتقن</button></div>
+<div class="status" id="wordStatus">اختاري كلمة للاستماع ثم جرّبي قراءتها بالميكروفون.</div>
+<div class="wordlist" id="wordList"></div>
+</div>
 
-alter table public.weekly_words
-add column if not exists content_title text;
+<div id="readingTab" class="hidden">
+<h2>📖 اقرأ واستمع</h2>
+<label for="readingSelect">اختاري نص القراءة</label><select id="readingSelect"><option value="">تحميل النصوص…</option></select>
+<div class="reading-text" id="readingText">ستظهر هنا نصوص القراءة التي تنشرها المعلمة.</div>
+<div class="actions"><button class="primary" id="readAloud">🔊 استمع إلى النص كاملًا</button><button class="secondary" id="startReadPractice">🎤 ابدئي القراءة</button><button class="secondary" id="stopReading">⏹ إيقاف</button></div>
+<div class="status" id="readingStatus">استمعي للنص ثم اقرئيه بصوت واضح.</div>
+<div class="progress"><div class="bar" id="readingBar"></div></div>
+<p class="note" id="readingProgress">لم يبدأ التدريب بعد.</p>
+</div>
 
-alter table public.weekly_words
-alter column start_date drop not null;
-
--- السماح للمعلمة المسجلة بإدارة المحتوى
-drop policy if exists "teacher_can_read_content"
-on public.weekly_words;
-
-create policy "teacher_can_read_content"
-on public.weekly_words
-for select to authenticated
-using (true);
-
-drop policy if exists "teacher_can_insert_content"
-on public.weekly_words;
-
-create policy "teacher_can_insert_content"
-on public.weekly_words
-for insert to authenticated
-with check (true);
-
-drop policy if exists "teacher_can_update_content"
-on public.weekly_words;
-
-create policy "teacher_can_update_content"
-on public.weekly_words
-for update to authenticated
-using (true)
-with check (true);
-
--- جدول إحصاءات مجمعة فقط، بلا أسماء أو تسجيلات
-create table if not exists public.learning_analytics (
-  id integer primary key check (id = 1),
-  total_sessions bigint not null default 0,
-  listen_count bigint not null default 0,
-  pronunciation_attempts bigint not null default 0,
-  pronunciation_successes bigint not null default 0,
-  reading_attempts bigint not null default 0,
-  reading_successes bigint not null default 0,
-  updated_at timestamptz not null default now()
-);
-
-insert into public.learning_analytics (id)
-values (1)
-on conflict (id) do nothing;
-
-alter table public.learning_analytics enable row level security;
-
-drop policy if exists "teacher_reads_aggregate_analytics"
-on public.learning_analytics;
-
-create policy "teacher_reads_aggregate_analytics"
-on public.learning_analytics
-for select to authenticated
-using (true);
-
--- لا نسمح للطلاب بقراءة الجدول أو تعديله مباشرة
-revoke all on public.learning_analytics from anon, authenticated;
-grant select on public.learning_analytics to authenticated;
-
--- تسجيل أحداث مجهولة الهوية فقط
-create or replace function public.record_learning_event(event_name text)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if event_name not in (
-    'session',
-    'listen',
-    'pron_attempt',
-    'pron_success',
-    'read_attempt',
-    'read_success'
-  ) then
-    raise exception 'Invalid event';
-  end if;
-
-  insert into public.learning_analytics (id)
-  values (1)
-  on conflict (id) do nothing;
-
-  update public.learning_analytics
-  set
-    total_sessions = total_sessions +
-      case when event_name = 'session' then 1 else 0 end,
-    listen_count = listen_count +
-      case when event_name = 'listen' then 1 else 0 end,
-    pronunciation_attempts = pronunciation_attempts +
-      case when event_name = 'pron_attempt' then 1 else 0 end,
-    pronunciation_successes = pronunciation_successes +
-      case when event_name = 'pron_success' then 1 else 0 end,
-    reading_attempts = reading_attempts +
-      case when event_name = 'read_attempt' then 1 else 0 end,
-    reading_successes = reading_successes +
-      case when event_name = 'read_success' then 1 else 0 end,
-    updated_at = now()
-  where id = 1;
-end;
-$$;
-
-revoke all on function public.record_learning_event(text) from public;
-grant execute on function public.record_learning_event(text) to anon, authenticated;
+<div id="teacherTab" class="hidden">
+<h2>🔐 دخول المعلمة</h2>
+<div id="loginBox">
+<div class="grid"><div><label for="teacherEmail">البريد الإلكتروني</label><input id="teacherEmail" type="email" autocomplete="username"></div><div><label for="teacherPassword">كلمة المرور</label><input id="teacherPassword" type="password" autocomplete="current-password"></div></div>
+<div class="actions"><button class="primary" id="loginBtn">تسجيل الدخول</button></div><div class="status" id="loginStatus">لوحة المعلمة مخصصة للحسابات المعتمدة فقط.</div>
+</div>
+<div id="adminBox" class="hidden">
+<div class="actions"><button class="secondary" id="logoutBtn">تسجيل الخروج</button><button class="soft" id="refreshAdmin">تحديث المحتوى</button></div>
+<h2 style="margin-top:18px">إدارة الوحدات والكلمات</h2>
+<input id="unitId" type="hidden"><div class="grid"><div><label for="unitTitle">اسم الوحدة</label><input id="unitTitle" placeholder="Unit 1"></div><div><label for="unitWords">الكلمات (كلمة في كل سطر)</label><textarea id="unitWords" placeholder="book&#10;teacher&#10;school"></textarea></div></div>
+<label style="margin-top:10px"><input type="checkbox" id="unitPublished" style="width:auto"> نشر الوحدة للطلاب</label>
+<div class="actions"><button class="primary" id="saveUnit">حفظ الوحدة</button><button class="secondary" id="clearUnit">وحدة جديدة</button></div>
+<div id="adminUnits"></div>
+<h2 style="margin-top:22px">إدارة نصوص القراءة</h2>
+<input id="readingId" type="hidden"><label for="readingTitle">عنوان النص</label><input id="readingTitle" placeholder="My School">
+<label for="readingBody" style="margin-top:10px">نص القراءة باللغة الإنجليزية</label><textarea id="readingBody" placeholder="I go to school every day..."></textarea>
+<label style="margin-top:10px"><input type="checkbox" id="readingPublished" style="width:auto"> نشر النص للطلاب</label>
+<div class="actions"><button class="primary" id="saveReading">حفظ نص القراءة</button><button class="secondary" id="clearReading">نص جديد</button></div>
+<div id="adminReadings"></div>
+<h2 style="margin-top:22px">📊 إحصائيات عامة</h2><div class="stats"><div class="stat"><b id="statSessions">—</b>جلسات تدريب</div><div class="stat"><b id="statWords">—</b>تدريبات كلمات</div><div class="stat"><b id="statReadings">—</b>تدريبات قراءة</div></div>
+<p class="note">الإحصائيات إجمالية فقط ولا تتضمن أسماء الطلاب أو نتائجهم الفردية أو تسجيلاتهم.</p>
+</div>
+</div>
+</section>
+<section class="card" id="studentReport">
+<h2>🏆 تقرير تقدّمك في هذه الجلسة</h2><div class="stats"><div class="stat"><b id="mastered">0</b>كلمات متقنة</div><div class="stat"><b id="attempted">0</b>كلمات جُرّبت</div><div class="stat"><b id="percent">0%</b>نسبة الإتقان</div></div>
+<div class="progress"><div class="bar" id="progressBar"></div></div><div class="status" id="encourage">كل محاولة تقرّبك من التميز! ⭐</div>
+<p class="note">التقييم الصوتي تقريبي ويعتمد على دعم المتصفح للتعرّف على الكلام. لا يتم تسجيل الصوت أو حفظه.</p>
+</section>
+</main>
+<footer>© منصة نُطقي وتقدّمي — الأستاذة رحمة الحربي</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* الإعدادات العامة: أدخلي عنوان مشروع Supabase والمفتاح العام anon فقط بعد إنشاء المشروع.
+   لا تضعي Service Role Key أو أي مفتاح سري في هذا الملف. */
+const SUPABASE_URL = "https://bimmwjskagxkxdjvqsjv.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_nceQwHWGNsyjLIBEo-Drgw_DXXL1aAY";
+const configured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("YOUR_") && !SUPABASE_ANON_KEY.includes("YOUR_");
+const db = configured ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
+const $=id=>document.getElementById(id);
+let units=[],readings=[],words=[],attempted=new Set(),mastered=new Set(),recognition=null,readingRecognition=null,readingStarted=0;
+function notify(id,msg){$(id).textContent=msg}
+function studentLabel(){const n=$('studentName').value.trim(),c=$('studentClass').value.trim();return [n,c].filter(Boolean).join(' — ')}
+function getVoices(){if(!('speechSynthesis'in window))return;const all=speechSynthesis.getVoices();const en=all.filter(v=>/^en[-_]/i.test(v.lang));$('voice').innerHTML='';(en.length?en:all).forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.name+' — '+v.lang;$('voice').append(o)})}
+if('speechSynthesis'in window){getVoices();speechSynthesis.onvoiceschanged=getVoices}
+$('rate').oninput=()=>$('rateVal').textContent=$('rate').value;$('pitch').oninput=()=>$('pitchVal').textContent=$('pitch').value;
+function speak(text){if(!('speechSynthesis'in window)){notify('wordStatus','متصفحك لا يدعم النطق الصوتي.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const v=speechSynthesis.getVoices().find(x=>x.name===$('voice').value);if(v){u.voice=v;u.lang=v.lang}else u.lang='en-US';u.rate=+$('rate').value;u.pitch=+$('pitch').value;speechSynthesis.speak(u)}
+function progress(){const done=mastered.size,total=words.length,pct=total?Math.round(done/total*100):0;$('mastered').textContent=done;$('attempted').textContent=attempted.size;$('percent').textContent=pct+'%';$('progressBar').style.width=pct+'%';$('encourage').textContent=pct===100&&total?'رائع! أتقنتِ جميع الكلمات. أحسنتِ! 🏆':pct>=60?'عمل ممتاز، واصلي التقدم! 🌟':pct?'أحسنتِ المحاولة، استمري بالتدريب! 💜':'كل محاولة تقرّبك من التميز! ⭐'}
+function renderWords(){const root=$('wordList');root.innerHTML='';words.forEach((w,i)=>{const el=document.createElement('div');el.className='word'+(mastered.has(i)?' done':'');const info=document.createElement('div'),strong=document.createElement('strong'),small=document.createElement('small');strong.textContent=w;small.textContent=mastered.has(i)?'✓ متقنة':attempted.has(i)?'تحتاج إلى محاولة أخرى':'استمعي ثم اقرئي';info.append(strong,small);const actions=document.createElement('div'),sp=document.createElement('button'),mic=document.createElement('button');sp.className='soft';sp.textContent='🔊';sp.onclick=()=>speak(w);mic.className='soft';mic.textContent='🎤';mic.onclick=()=>pronounce(i);actions.append(sp,mic);el.append(info,actions);root.append(el)})}
+function pronounce(i){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){notify('wordStatus','التقييم الصوتي غير مدعوم هنا. جرّبي Chrome أو Edge.');return}if(recognition)recognition.abort();recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=3;attempted.add(i);notify('wordStatus','استمعي إلى الكلمة ثم انطقيها الآن…');recognition.onresult=e=>{const said=e.results[0][0].transcript.toLowerCase().replace(/[^a-z']/g,''),target=words[i].toLowerCase().replace(/[^a-z']/g,'');const ok=said===target||said.includes(target);if(ok)mastered.add(i);else mastered.delete(i);notify('wordStatus',ok?'ممتاز! نطقك قريب جدًا من الكلمة الصحيحة. 🌟':'محاولة جميلة! استمعي مرة أخرى وجرّبي بهدوء. 💜');renderWords();progress()};recognition.onerror=e=>notify('wordStatus','تعذّر استخدام الميكروفون: '+e.error);recognition.start()}
+function setWords(list){words=list;attempted=new Set();mastered=new Set();renderWords();progress()}
+$('playAll').onclick=async()=>{for(const w of words){speak(w);await new Promise(r=>{const t=setInterval(()=>{if(!speechSynthesis.speaking){clearInterval(t);r()}},150)})}};
+$('stopSpeech').onclick=()=>{speechSynthesis.cancel();if(recognition)recognition.abort();if(readingRecognition)readingRecognition.abort()};
+$('retryWrong').onclick=()=>{const wrong=words.filter((w,i)=>!mastered.has(i));if(!wrong.length){notify('wordStatus','أحسنتِ! لا توجد كلمات تحتاج إلى إعادة. 🎉');return}notify('wordStatus','تدرّبي على الكلمات غير المتقنة باستخدام أزرار السماعة والميكروفون.')};
+$('unitSelect').onchange=()=>{const u=units.find(x=>x.id===$('unitSelect').value);if(u)setWords(u.words||[])};
+$('readingSelect').onchange=showReading;
+function showReading(){const r=readings.find(x=>x.id===$('readingSelect').value);$('readingText').textContent=r?r.body:'ستظهر هنا نصوص القراءة التي تنشرها المعلمة.';$('readingBar').style.width='0%';$('readingProgress').textContent='لم يبدأ التدريب بعد.'}
+$('readAloud').onclick=()=>speak($('readingText').textContent);
+$('stopReading').onclick=()=>{speechSynthesis.cancel();if(readingRecognition)readingRecognition.abort()};
+$('startReadPractice').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){notify('readingStatus','التعرّف على الكلام غير مدعوم في هذا المتصفح.');return}const target=$('readingText').textContent;if(!target||target.startsWith('ستظهر'))return;readingRecognition=new SR();readingRecognition.lang='en-US';readingRecognition.interimResults=false;notify('readingStatus','ابدئي قراءة النص بصوت واضح…');readingRecognition.onresult=e=>{const said=e.results[0][0].transcript;const targetWords=target.toLowerCase().match(/[a-z']+/g)||[],saidWords=said.toLowerCase().match(/[a-z']+/g)||[];let matches=0;targetWords.forEach((w,i)=>{if(saidWords.includes(w))matches++});const pct=targetWords.length?Math.round(matches/targetWords.length*100):0;$('readingBar').style.width=pct+'%';$('readingProgress').textContent='تقدير تطابق الكلمات المسموعة: '+pct+'%';notify('readingStatus',pct>=70?'أحسنتِ القراءة! تابعي التقدم. 🌟':'محاولة جيدة. استمعي إلى النص وحاولي مرة أخرى. 💜')};readingRecognition.onerror=e=>notify('readingStatus','تعذّر تشغيل الميكروفون: '+e.error);readingRecognition.start()};
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['wordsTab','readingTab','teacherTab'].forEach(id=>$(id).classList.toggle('hidden',id!==b.dataset.tab));});
+async function loadPublic(){if(!db){$('unitSelect').innerHTML='<option>المنصة بانتظار ربط قاعدة البيانات</option>';$('readingSelect').innerHTML='<option>المنصة بانتظار ربط قاعدة البيانات</option>';notify('wordStatus','يلزم إعداد مشروع قاعدة البيانات قبل نشر المحتوى.');return}
+const [u,r]=await Promise.all([db.from('units').select('id,title,words').eq('published',true).order('created_at'),db.from('readings').select('id,title,body').eq('published',true).order('created_at')]);
+if(u.error||r.error){notify('wordStatus','تعذّر تحميل المحتوى. تحققي من إعدادات قاعدة البيانات وسياسات الوصول.');return}
+units=u.data||[];readings=r.data||[];$('unitSelect').innerHTML='';units.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.title;$('unitSelect').append(o)});if(units.length)setWords(units[0].words||[]);$('readingSelect').innerHTML='';readings.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.title;$('readingSelect').append(o)});showReading();
+}
+async function logEvent(kind){if(db){try{await db.rpc('record_public_event',{event_kind:kind})}catch(e){}}}
+async function adminAllowed(){const {data:{user}}=await db.auth.getUser();if(!user)return false;const {data,error}=await db.from('teacher_admins').select('user_id').eq('user_id',user.id).maybeSingle();return !error&&!!data}
+$('loginBtn').onclick=async()=>{if(!db){notify('loginStatus','يجب ربط قاعدة البيانات أولًا.');return}notify('loginStatus','جارٍ التحقق…');const {error}=await db.auth.signInWithPassword({email:$('teacherEmail').value,password:$('teacherPassword').value});if(error){notify('loginStatus','تعذّر تسجيل الدخول. تحققي من البريد وكلمة المرور.');return}if(!await adminAllowed()){await db.auth.signOut();notify('loginStatus','هذا الحساب غير مخوّل لإدارة المنصة.');return}$('loginBox').classList.add('hidden');$('adminBox').classList.remove('hidden');await refreshAdmin()};
+$('logoutBtn').onclick=async()=>{await db.auth.signOut();$('adminBox').classList.add('hidden');$('loginBox').classList.remove('hidden');notify('loginStatus','تم تسجيل الخروج.')};
+$('refreshAdmin').onclick=refreshAdmin;
+async function refreshAdmin(){if(!db||!await adminAllowed())return;const [u,r,a]=await Promise.all([db.from('units').select('*').order('created_at',{ascending:false}),db.from('readings').select('*').order('created_at',{ascending:false}),db.from('daily_aggregate_stats').select('*').order('day',{ascending:false}).limit(30)]);renderAdminList('adminUnits',u.data||[],'unit');renderAdminList('adminReadings',r.data||[],'reading');const totals=(a.data||[]).reduce((s,x)=>({sessions:s.sessions+(x.sessions||0),words:s.words+(x.word_practices||0),reading_practices:s.reading_practices+(x.reading_practices||0)}),{sessions:0,words:0,reading_practices:0});$('statSessions').textContent=totals.sessions;$('statWords').textContent=totals.words;$('statReadings').textContent=totals.readings}
+function renderAdminList(id,data,type){const root=$(id);root.innerHTML='';data.forEach(x=>{const box=document.createElement('div');box.className='unit';const h=document.createElement('h3');h.textContent=x.title+(x.published?' — منشور':' — مسودة');const p=document.createElement('p');p.className='note';p.textContent=type==='unit'?(x.words||[]).join('، '):x.body;const edit=document.createElement('button');edit.className='secondary';edit.textContent='تعديل';edit.onclick=()=>type==='unit'?fillUnit(x):fillReading(x);const pub=document.createElement('button');pub.className='soft';pub.textContent=x.published?'إلغاء النشر':'نشر';pub.onclick=()=>togglePublish(type,x);const del=document.createElement('button');del.className='secondary';del.textContent='حذف';del.onclick=()=>deleteContent(type,x.id);box.append(h,p,edit,pub,del);root.append(box)})}
+function fillUnit(x){$('unitId').value=x.id;$('unitTitle').value=x.title;$('unitWords').value=(x.words||[]).join('\n');$('unitPublished').checked=x.published}
+function fillReading(x){$('readingId').value=x.id;$('readingTitle').value=x.title;$('readingBody').value=x.body;$('readingPublished').checked=x.published}
+$('clearUnit').onclick=()=>{$('unitId').value='';$('unitTitle').value='';$('unitWords').value='';$('unitPublished').checked=false};
+$('clearReading').onclick=()=>{$('readingId').value='';$('readingTitle').value='';$('readingBody').value='';$('readingPublished').checked=false};
+$('saveUnit').onclick=async()=>{const words=$('unitWords').value.split(/[\n,،;؛]+/).map(x=>x.trim()).filter(Boolean);const payload={title:$('unitTitle').value.trim(),words,published:$('unitPublished').checked};if(!payload.title||!words.length){alert('أدخلي اسم الوحدة وكلمة واحدة على الأقل.');return}const id=$('unitId').value;const q=id?db.from('units').update(payload).eq('id',id):db.from('units').insert(payload);const {error}=await q;if(error){alert('تعذّر حفظ الوحدة.');return}$('clearUnit').click();await refreshAdmin();await loadPublic()};
+$('saveReading').onclick=async()=>{const payload={title:$('readingTitle').value.trim(),body:$('readingBody').value.trim(),published:$('readingPublished').checked};if(!payload.title||!payload.body){alert('أدخلي عنوان النص ومحتواه.');return}const id=$('readingId').value;const q=id?db.from('readings').update(payload).eq('id',id):db.from('readings').insert(payload);const {error}=await q;if(error){alert('تعذّر حفظ نص القراءة.');return}$('clearReading').click();await refreshAdmin();await loadPublic()};
+async function togglePublish(type,x){const table=type==='unit'?'units':'readings';const {error}=await db.from(table).update({published:!x.published}).eq('id',x.id);if(error)alert('تعذّر تحديث حالة النشر.');await refreshAdmin();await loadPublic()}
+async function deleteContent(type,id){if(!confirm('هل تريدين حذف هذا المحتوى نهائيًا؟'))return;const {error}=await db.from(type==='unit'?'units':'readings').delete().eq('id',id);if(error)alert('تعذّر الحذف.');await refreshAdmin();await loadPublic()}
+$('studentName').addEventListener('change',()=>logEvent('session'));window.addEventListener('beforeunload',()=>{if(recognition)recognition.abort();if(readingRecognition)readingRecognition.abort();speechSynthesis.cancel()});
+$('wordList').addEventListener('click',e=>{if(e.target.closest('button'))logEvent('word')});$('startReadPractice').addEventListener('click',()=>logEvent('reading'));
+loadPublic();
+</script>
+</body></html>
